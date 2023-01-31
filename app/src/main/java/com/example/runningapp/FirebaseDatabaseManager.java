@@ -1,6 +1,9 @@
 package com.example.runningapp;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -10,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -73,6 +77,10 @@ public class FirebaseDatabaseManager {
                 });
 
     }
+//    public void addLocationToRunner(String uid, double latitude, double longitude) {
+//        DatabaseReference runnerRef = mRunnersRef.child(uid);
+//        runnerRef.child("location").setValue(new GeoLocation(latitude, longitude));
+//    }
 
     public void getRunnerByUid(String uid, final FirebaseCallback callback) {
         mRunnersRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {

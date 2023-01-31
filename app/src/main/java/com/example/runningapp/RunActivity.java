@@ -2,7 +2,6 @@ package com.example.runningapp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -12,38 +11,27 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textview.MaterialTextView;
 import com.google.gson.Gson;
@@ -55,7 +43,6 @@ import java.util.TimerTask;
 
 
 public class RunActivity extends AppCompatActivity implements LocationListener {
-    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     private double totalDistance;
     private LocationManager locationManager;
     private FragmentMap fragmentMap;
@@ -64,7 +51,6 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
     private Location lastKnownLocation;
     private LocationManager.CallBack_Location callBack_location;
     private final double MAX_DISTANCE_TO_TOAST = 0.1;
-    private final int MIN_POINTS = 5;
 
     private MaterialButton run_BTN_start;
     private MaterialButton run_BTN_stop;
@@ -74,8 +60,7 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
     private TimerTask timerTask;
     private long timeElapsed;
     private Toolbar run_toolbar;
-    private PowerManager.WakeLock wakeLock;
-    private  LocationRequest locationRequest;
+
 
 //    Location attributes
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -98,13 +83,11 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
         fragmentMap.getActivity();
     }
 
-    @SuppressLint("InvalidWakeLockTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakelockTag");
+
         fragmentMap = new FragmentMap();
         fragmentMap.setActivity(this);
         getSupportFragmentManager().beginTransaction().add(R.id.run_FRAME_map, fragmentMap).commit();
@@ -127,7 +110,6 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
                 // Permission denied
                 // You can show a message to the user or handle the case in any other way
                 showLocationError();
-                openLocationSettings();
             }
         }
     }
@@ -137,9 +119,9 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
     private void activateLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Show an explanation to the user as to why the permission is needed
+                // Show an explanation to the user
+                // as to why the permission is needed
                 showLocationError();
-                openLocationSettings();
             } else {
                 // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
@@ -153,14 +135,16 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
     @SuppressLint("MissingPermission")
     private void getLastLocation() {
         mFusedLocationClient.getLastLocation()
-                .addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful() && task.getResult() != null && lastKnownLocation == null) {
-                            lastKnownLocation = task.getResult();
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            // Use the location data here
+                            lastKnownLocation = location;
                         } else {
-                            // Show a message or handle the error in some other way
-                            waitForLocationSettingsEnabled();
+                            // Location data is not available
+                            // You can show a message to the user or handle the case in any other way
+                            showLocationError();
                         }
                     }
                 });
@@ -179,7 +163,6 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
 
     }
     private void initViews() {
-        wakeLock.acquire();
         locationManager =  new LocationManager(this);
         locationManager.getCurrentLocation(callBack_location);
         points = new ArrayList<>();
@@ -206,19 +189,13 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
         run_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wakeLock.release();
                 onBackPressed();
             }
         });
     }
 
     private void stopRun() {
-        if (this.points.isEmpty() || this.points.size() < MIN_POINTS) {
-            showDialog();
-            return;
-        }
         isOnRun = false;
-        wakeLock.release();
         this.timerTask.cancel();
         run_BTN_start.setVisibility(View.VISIBLE);
         run_BTN_stop.setVisibility(View.INVISIBLE);
@@ -231,24 +208,6 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
         finish();
-    }
-
-    private void showDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Not moving yet?")
-                .setMessage("Runner needs a longer run activity to upload. Please continue or start over")
-                .setPositiveButton("Resume", (dialog, which) -> {
-                    dialog.dismiss();
-                })
-                .setNegativeButton("Discard", (dialog, which) -> {
-                    dialog.cancel();
-                    run_BTN_start.setVisibility(View.VISIBLE);
-                    run_BTN_stop.setVisibility(View.INVISIBLE);
-                    wakeLock.release();
-                    this.timerTask.cancel();
-                    onBackPressed();
-                })
-                .create().show();
     }
 
 
@@ -288,55 +247,20 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
                 fragmentMap.setCallBack_map(new CallBack_Map() {
                     @Override
                     public void onCallBack() {
-                        if(lastKnownLocation != null)
-                            fragmentMap.zoom(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                        fragmentMap.zoom(lastKnownLocation.getLatitude(),lastKnownLocation.getLongitude());
                     }
                 });
                 startTracking();
             } else {
                 // Permission not granted, show a message to the user
                 Toast.makeText(this, "Location permission is needed to start the run", Toast.LENGTH_SHORT).show();
-                openLocationSettings();
-                waitForLocationSettingsEnabled();
+                openAppSettings();
             }
         } else {
             // Location service is not enabled, show a message to the user
             Toast.makeText(this, "Location service is not enabled", Toast.LENGTH_SHORT).show();
             openLocationSettings();
-            run_BTN_start.setVisibility(View.VISIBLE);
-            run_BTN_stop.setVisibility(View.INVISIBLE);
-            wakeLock.release();
-            this.timerTask.cancel();
-            onBackPressed();
         }
-    }
-
-    private void waitForLocationSettingsEnabled() {
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
-        SettingsClient client = LocationServices.getSettingsClient(this);
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // Location settings are enabled
-                getLastLocation();
-            }
-        });
-        task.addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                // Location settings are not enabled
-                if (e instanceof ResolvableApiException) {
-                    try {
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(RunActivity.this, REQUEST_CHECK_SETTINGS);
-                    } catch (IntentSender.SendIntentException sendEx) {
-                        // Handle the error
-                    }
-                }
-            }
-        });
     }
 
     private LocationCallback mLocationCallback = new LocationCallback() {
@@ -354,53 +278,11 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
 
     @SuppressLint("MissingPermission")
     private void startTracking() {
-        locationRequest = new LocationRequest();
-        locationRequest.setInterval(3000); // 3 seconds
-        locationRequest.setFastestInterval(1500); // 1.5 seconds
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(5000); // 5 seconds
+        locationRequest.setFastestInterval(3000); // 3 seconds
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-//        locationRequest.setInterval(5000); // 5 seconds
-//        locationRequest.setFastestInterval(3000); // 3 seconds
-//        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequest);
 
-        SettingsClient client = LocationServices.getSettingsClient(this);
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-
-        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, null);
-            }
-        });
-
-        task.addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                int statusCode = ((ApiException) e).getStatusCode();
-                switch (statusCode) {
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied, but this can be fixed
-                        // by showing the user a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            ResolvableApiException resolvable = (ResolvableApiException) e;
-                            resolvable.startResolutionForResult(RunActivity.this,
-                                    REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException sendEx) {
-                            // Ignore the error.
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way
-                        // to fix the settings so we won't show the dialog.
-                        break;
-                }
-            }
-        });
         mFusedLocationClient.requestLocationUpdates(locationRequest, mLocationCallback, null);
     }
     /**

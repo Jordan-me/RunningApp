@@ -1,6 +1,9 @@
 package com.example.runningapp;
 
+//import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.PropertyName;
+
+import java.util.Date;
 import java.util.List;
 
 public class Run {
