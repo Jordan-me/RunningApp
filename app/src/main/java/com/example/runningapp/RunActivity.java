@@ -2,6 +2,7 @@ package com.example.runningapp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -51,6 +52,7 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
     private Location lastKnownLocation;
     private LocationManager.CallBack_Location callBack_location;
     private final double MAX_DISTANCE_TO_TOAST = 0.1;
+    private final int MIN_POINTS = 5;
 
     private MaterialButton run_BTN_start;
     private MaterialButton run_BTN_stop;
@@ -195,6 +197,10 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
     }
 
     private void stopRun() {
+        if (this.points.isEmpty() || this.points.size() < MIN_POINTS) {
+            showDialog();
+            return;
+        }
         isOnRun = false;
         this.timerTask.cancel();
         run_BTN_start.setVisibility(View.VISIBLE);
@@ -208,6 +214,22 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
         finish();
+    }
+
+    private void showDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Not moving yet?")
+                .setMessage("Runner needs a longer run activity to upload. Please continue or start over")
+                .setPositiveButton("Resume", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> {
+                    dialog.cancel();
+                    run_BTN_start.setVisibility(View.VISIBLE);
+                    run_BTN_stop.setVisibility(View.INVISIBLE);
+                    onBackPressed();
+                })
+                .create().show();
     }
 
 
