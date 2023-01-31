@@ -18,6 +18,7 @@ import android.location.LocationListener;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
@@ -62,7 +63,7 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
     private TimerTask timerTask;
     private long timeElapsed;
     private Toolbar run_toolbar;
-
+    private PowerManager.WakeLock wakeLock;
 
 //    Location attributes
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -85,11 +86,13 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
         fragmentMap.getActivity();
     }
 
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
-
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakelockTag");
         fragmentMap = new FragmentMap();
         fragmentMap.setActivity(this);
         getSupportFragmentManager().beginTransaction().add(R.id.run_FRAME_map, fragmentMap).commit();
@@ -165,6 +168,7 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
 
     }
     private void initViews() {
+        wakeLock.acquire();
         locationManager =  new LocationManager(this);
         locationManager.getCurrentLocation(callBack_location);
         points = new ArrayList<>();
@@ -191,6 +195,7 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
         run_toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                wakeLock.release();
                 onBackPressed();
             }
         });
@@ -202,6 +207,7 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
             return;
         }
         isOnRun = false;
+        wakeLock.release();
         this.timerTask.cancel();
         run_BTN_start.setVisibility(View.VISIBLE);
         run_BTN_stop.setVisibility(View.INVISIBLE);
@@ -223,10 +229,11 @@ public class RunActivity extends AppCompatActivity implements LocationListener {
                 .setPositiveButton("Resume", (dialog, which) -> {
                     dialog.dismiss();
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> {
+                .setNegativeButton("Discard", (dialog, which) -> {
                     dialog.cancel();
                     run_BTN_start.setVisibility(View.VISIBLE);
                     run_BTN_stop.setVisibility(View.INVISIBLE);
+                    wakeLock.release();
                     onBackPressed();
                 })
                 .create().show();
