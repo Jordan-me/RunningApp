@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1C1C1C"
+    tools:context=".SplashActivity">
+
+    <ImageView
+        android:id="@+id/splash_IMG_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:alpha="0.4"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_runnablebackground"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/splash_IMG_logo"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_centerInParent="true"
+        app:shapeAppearanceOverlay="@style/roundedImageView"
+        android:src="@drawable/img_runnablelogo" />
+
+</RelativeLayout>
+
+
+
+
+
+
+

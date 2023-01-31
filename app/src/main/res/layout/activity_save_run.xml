@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SaveRunActivity">
+
+<!--    TOOL BAR WITH SAVE BUTTON AND PAGE'S TITLE-->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1D327E"
+        >
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/save_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginTop="20dp"
+            android:background="#1D327E"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="Save Your Run"
+            app:titleMarginStart="35dp"
+            app:titleTextAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title"
+            app:titleTextColor="@android:color/white" >
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/save_BTN_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:insetBottom="0dp"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:insetTop="0dp"
+                android:background="#00FFFFFF"
+
+                android:text="Save"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_gravity="end"
+                app:shapeAppearanceOverlay="@style/FlatButtonShape"/>
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <!--            EDIT TEXT FOR RUN'S TITLE -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/save_CONT_TXT_title"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="8dp"
+                app:boxStrokeColor="#1D327E"
+                app:hintTextColor="#1D327E"
+                app:helperText="*Required"
+                app:helperTextTextColor="#E4810F0F">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/save_TXT_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:hint="Title your run"
+                    android:inputType="textShortMessage"
+                    android:lines="1"
+                    android:textAlignment="center"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/save_CONT_TXT_info"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="15dp"
+                app:boxStrokeColor="#1D327E"
+                app:hintTextColor="#1D327E"
+                app:helperTextTextColor="#E4810F0F">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/save_TXT_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="start"
+                    android:hint="How did it go? share more about your run activity"
+                    android:inputType="textLongMessage"
+                    android:lines="2"
+                    android:textAlignment="center"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="20dp"
+                android:adjustViewBounds="true"
+                android:importantForAccessibility="yes"
+                android:src="@drawable/img_sample_map"
+                android:visibility="visible" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="8dp"
+                android:text="This is a sample map, you'll see your run after saving it"
+                android:layout_gravity="center"
+                android:textColor="#A9000000"
+                android:textSize="16sp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:text="Visibility"
+                android:textColor="#F2000000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:text="Who can see"
+                android:textColor="#F2000000"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/save_SPINNER_visibility"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:spinnerMode="dialog"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/spinner_background"
+                android:entries="@array/visibility_options" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/save_BTN_discard"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="5dp"
+                android:backgroundTint="#00FFFFFF"
+                android:gravity="center"
+                android:text="Discard activity"
+                android:textAllCaps="false"
+                android:textColor="#F8630202"
+                app:strokeColor="#F8630202"
+                app:strokeWidth="2dp"
+                android:insetTop="0dp"
+                />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="32dp" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

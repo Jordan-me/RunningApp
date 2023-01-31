@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1C1C1C"
+    tools:context=".VerifyPhoneNumberActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:alpha="0.4"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_runnablebackground" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/verify_IMG_logo"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        app:shapeAppearanceOverlay="@style/roundedImageView"
+        android:src="@drawable/img_runnablelogo"
+        />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/verify_LAY_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/verify_IMG_logo"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/verify_ETXT_digit_1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:background="@drawable/edittext_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:nextFocusForward="@id/verify_ETXT_digit_2"
+            android:padding="5dp"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/verify_ETXT_digit_2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edittext_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:nextFocusForward="@id/verify_ETXT_digit_3"
+            android:padding="5dp"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/verify_ETXT_digit_3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edittext_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:nextFocusForward="@id/verify_ETXT_digit_4"
+            android:padding="5dp"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/verify_ETXT_digit_4"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edittext_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:nextFocusForward="@id/verify_ETXT_digit_5"
+            android:padding="5dp"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/verify_ETXT_digit_5"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edittext_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:nextFocusForward="@id/verify_ETXT_digit_6"
+            android:padding="5dp"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/verify_ETXT_digit_6"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/edittext_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:padding="5dp"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+    <TextView
+        android:id="@+id/verify_TXT_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/verify_LAY_code"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        android:textStyle="bold"
+        android:textColor="#AF0000"
+        android:text="****"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/verify_LAY_code"
+        android:layout_centerInParent="true"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:ignore="MissingClass">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/verify_BTN_verify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:backgroundTint="#A3000000"
+            android:padding="15dp"
+            android:text="Verify Code"
+            android:textColor="#ffffff" />
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</RelativeLayout>
