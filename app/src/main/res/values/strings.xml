@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Runner</string>
+    <string-array name="visibility_options">
+        <item>Everyone</item>
+        <item>Only You</item>
+    </string-array>
+    <string-array name="gender_array">
+        <item>Female</item>
+        <item>Male</item>
+        <item>Other</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="gender_prompt">Gender</string>
+    <string name="google_map_api_key" translatable="false">YOUR_GOOGLE_API_KEY</string>
+</resources>
