@@ -1,6 +1,5 @@
 package com.example.runningapp;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,11 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.maps.SupportMapFragment;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class HomeFragment extends Fragment {

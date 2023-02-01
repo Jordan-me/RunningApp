@@ -103,6 +103,11 @@ public class FragmentMap extends Fragment {
     }
 
     public Polyline updateRoute(List<LatLng> points) {
+        this.mMap.clear();
+        mMap.addMarker((new MarkerOptions()).position(points.get(0))
+                .icon(bitmapDescriptorFromVector(R.drawable.ic_flag_start_run)));
+        mMap.addMarker((new MarkerOptions()).position(points.get(points.size()-1))
+                .icon(bitmapDescriptorFromVector(R.drawable.ic_running)));
         return this.mMap.addPolyline(new PolylineOptions()
                 .addAll(points)
                 .color(Color.RED)
