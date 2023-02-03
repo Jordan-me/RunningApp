@@ -1,16 +1,11 @@
 package com.example.runningapp;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.appcompat.widget.Toolbar;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -26,13 +21,10 @@ import android.widget.DatePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -55,6 +47,8 @@ public class EditProfileActivity extends AppCompatActivity {
     private TextInputEditText edit_TXT_birthdate;
 
     private String urlImage;
+    private Uri imagePath;
+    private byte[] imageData ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +125,11 @@ public class EditProfileActivity extends AppCompatActivity {
                         .error(R.drawable.ic_profile)
                         .into(edit_profile_image);
                 urlImage = selectedImage.toString();
+                imagePath = selectedImage;
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                imageData = baos.toByteArray();
                 Log.d("editProfile",selectedImage.toString());
 
             } catch (Exception e) {
@@ -201,7 +200,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 .setBirthdate(edit_TXT_birthdate.getText().toString())
                 .setGender(edit_SPINNER_gender.getSelectedItem().toString())
                 .setWeight(edit_TXT_weight.getText().toString());
-        FirebaseDatabaseManager.getInstance().addRunnerToDatabase(MSPV.getInstance().getString(MSPV.USERID,""), newRunner);
+        FirebaseDatabaseManager.getInstance().addRunnerToDatabase(MSPV.getInstance().getString(MSPV.USERID,""), newRunner, imageData);
         updated = true;
         finishCurrentActivity();
     }

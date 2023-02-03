@@ -125,7 +125,7 @@ public class RunAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             // Bind the data from the Run object and the Runner object to the views
                             list_TXT_name.setText(runner.getFirstName() + " " + runner.getLastName());
                             Glide.with(context)
-                                    .load(MSPV.getInstance().getString(MSPV.USER_IMAGE,"") )
+                                    .load(runner.getProfileImage())
                                     .error(R.drawable.ic_profile)
                                     .into(list_IMG_profile);
 

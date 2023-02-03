@@ -1,8 +1,7 @@
 package com.example.runningapp;
 
-import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -13,8 +12,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 
@@ -24,11 +25,15 @@ public class FirebaseDatabaseManager {
     private DatabaseReference mRootRef;
     private DatabaseReference mRunnersRef;
     private DatabaseReference mRunsRef;
+    private FirebaseStorage storage;
+    private StorageReference mStorageRef;
 
     private FirebaseDatabaseManager() {
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mRunnersRef = mRootRef.child("runners");
         mRunsRef = mRootRef.child("runs");
+        storage = FirebaseStorage.getInstance();
+        mStorageRef = storage.getReference();
     }
     public static FirebaseDatabaseManager getInstance() {
         return firebaseDatabaseManager;
@@ -47,11 +52,14 @@ public class FirebaseDatabaseManager {
         runnerRef.child("lastName").setValue("Athlete");
         runnerRef.child("phone").setValue(user.getPhoneNumber());
     }
-    public void addRunnerToDatabase(String uid, Runner runner) {
+    public void addRunnerToDatabase(String uid, Runner runner, byte[] imageData) {
         DatabaseReference runnerRef = mRunnersRef.child(uid);
         runnerRef.child("firstName").setValue(runner.getFirstName());
         runnerRef.child("lastName").setValue(runner.getLastName());
-        runnerRef.child("profileImage").setValue(runner.getProfileImage());
+        if(imageData != null && imageData.length > 0){
+            uploadImage(runnerRef,uid, imageData);
+        }
+//        runnerRef.child("profileImage").setValue(runner.getProfileImage());
         runnerRef.child("city").setValue(runner.getCity());
         runnerRef.child("state").setValue(runner.getState());
         runnerRef.child("bio").setValue(runner.getBio());
@@ -59,6 +67,23 @@ public class FirebaseDatabaseManager {
         runnerRef.child("gender").setValue(runner.getGender());
         runnerRef.child("weight").setValue(runner.getWeight());
         runnerRef.child("phone").setValue(uid);
+    }
+
+    private void uploadImage(DatabaseReference runnerRef, String uid, byte[] imageData) {
+        final StorageReference imagesRef = mStorageRef.child("images/" + uid);
+        UploadTask uploadTask = imagesRef.putBytes(imageData);
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                imagesRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String downloadUrl = uri.toString();
+                        runnerRef.child("profileImage").setValue(downloadUrl);
+                    }
+                });
+            }
+        });
     }
 
     public void addRunToDatabase(Run run) {
@@ -77,10 +102,6 @@ public class FirebaseDatabaseManager {
                 });
 
     }
-//    public void addLocationToRunner(String uid, double latitude, double longitude) {
-//        DatabaseReference runnerRef = mRunnersRef.child(uid);
-//        runnerRef.child("location").setValue(new GeoLocation(latitude, longitude));
-//    }
 
     public void getRunnerByUid(String uid, final FirebaseCallback callback) {
         mRunnersRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {

@@ -1,5 +1,7 @@
 package com.example.runningapp;
 
+import android.net.Uri;
+
 public class Runner {
     private String firstName;
     private String lastName;
